@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from '../utils/classNames';
 import Button from './Button';
 import Menu from './Menu';
-import withOpenClose from './withOpenClose';
+import Toggleable from './Toggleable';
 
 class DropDown extends PureComponent {
 
@@ -24,13 +24,17 @@ class DropDown extends PureComponent {
     const { props } = this;
 
     return (
-      <div className={classNames.container}>
-        <Button onClick={props.toggle}>{props.label}</Button>
-        {props.isOpen && <Menu items={props.items} />}
-      </div>
+      <Toggleable>
+        {({ isOpen, innerRef, toggle }) => (
+          <div className={classNames.container} ref={innerRef}>
+            <Button onClick={toggle}>{props.label}</Button>
+            {isOpen && <Menu items={props.items} />}
+          </div>
+        )}
+      </Toggleable>
     );
   }
 
 }
 
-export default withOpenClose(DropDown);
+export default DropDown;
