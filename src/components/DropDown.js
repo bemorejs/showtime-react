@@ -6,6 +6,8 @@ import Menu from './Menu';
 
 class DropDown extends PureComponent {
 
+  container = React.createRef();
+
   static propTypes = {
     label: PropTypes.string,
     items: PropTypes.arrayOf(PropTypes.shape({
@@ -28,6 +30,7 @@ class DropDown extends PureComponent {
     this.setState({
       isOpen: true
     });
+    document.addEventListener('click', this.handleClickOutside);
   };
 
   close = (e) => {
@@ -35,13 +38,24 @@ class DropDown extends PureComponent {
     this.setState({
       isOpen: false
     });
+    document.removeEventListener('click', this.handleClickOutside);
   };
+
+  handleClickOutside = (e) => {
+    if (!this.container.current.contains(e.target)) {
+      this.close(e);
+    }
+  };
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
+  }
 
   render() {
     const { props, state } = this;
 
     return (
-      <div className={classNames.container}>
+      <div className={classNames.container} ref={this.container}>
         <Button onClick={state.isOpen ? this.close : this.open}>{props.label}</Button>
         {state.isOpen && <Menu items={props.items} />}
       </div>
